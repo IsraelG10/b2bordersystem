@@ -12,7 +12,7 @@ module.exports = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './src/infrastructure/migrations'
+      directory: './db/migrations/'
     }
   }
 };
