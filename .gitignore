@@ -1,0 +1,49 @@
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+**/.env
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Docker
+*.env.*.local
+docker-compose.override.yml
+docker-compose.override.*.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database dumps
+db/*.sql
+db/*.dump
+
+# ESLint / Prettier cache
+.eslintcache
+.prettiercache
+
+# Serverless
+.lambda/
+.serverless/
+**/.serverless
+
+# VSCode
+.vscode/
+.idea/
+
+# Coverage reports
+coverage/
+**/coverage/
