@@ -58,7 +58,12 @@ class OrderUseCase {
         total_cents
       });
 
-      order = await this.orderRepo.findById(orderId);
+      // Leer la orden dentro de la transacción
+      order = await this.orderRepo.findById(orderId, trx);
+
+      if (!order || !order.id) {
+        throw new Error('Order creation failed: invalid response');
+      }
 
       for (const item of orderItems) {
         await trx('order_items').insert({
@@ -89,42 +94,54 @@ class OrderUseCase {
     return this.orderRepo.search(params);
   }
 
-
-  // Aprod Order
-  async confirm({ id, idempotencyKey }) {
+  // Confirmar orden
+    async confirm({ id, idempotencyKey }) {
       const existing = await this.idempotencyRepo.findByKey(idempotencyKey);
-      if (existing) {
-        return JSON.parse(existing.response);
-      }
+      if (existing) return existing.response_body;
 
-      const order = await this.orderRepo.findById(id); 
+      const order = await this.orderRepo.findById(id);
       if (!order) throw new Error('Order not found');
       if (order.status !== 'CREATED') throw new Error('Order cannot be confirmed');
 
-      // 3. Actualizar estado de la orden
-      // Pasa la variable renombrada: id
-      await this.orderRepo.update(id, { status: 'CONFIRMED' });
+      // Actualizar estado de la orden
+      const updatedOrder = await this.orderRepo.updateStatus(id, 'CONFIRMED');
 
-      const response = { id: order.id, status: 'CONFIRMED' };
-
-      // 4. Guardar key de idempotencia
+      // Guardar key de idempotencia
       await this.idempotencyRepo.create({
         key: idempotencyKey,
         target_type: 'order',
         target_id: id,
-        response_body: response
+        response_body: updatedOrder
       });
 
-      return response;
-  }
+      return updatedOrder;
+    }
 
+
+
+  // Cancelar orden
   async cancel({ id }) {
-      const order = await this.orderRepo.findById(id);
-      if (!order) throw new Error('Order not found');
+    const order = await this.orderRepo.findById(id);
+    if (!order) throw new Error('Order not found');
 
-      const now = new Date();
+    const now = new Date();
 
-      if (order.status === 'CREATED') {
+    if (order.status === 'CREATED') {
+      // Restaurar stock
+      const items = await this.orderItemRepo.findByOrderId(id);
+      for (const item of items) {
+        const product = await this.productRepo.findById(item.product_id);
+        await this.productRepo.update(product.id, { stock: product.stock + item.qty });
+      }
+
+      await this.orderRepo.updateStatus(id, 'CANCELED');
+      return { id: order.id, status: 'CANCELED' };
+
+    } else if (order.status === 'CONFIRMED') {
+      const createdAt = new Date(order.created_at);
+      const diffMinutes = (now - createdAt) / (1000 * 60);
+
+      if (diffMinutes <= 10) {
         // Restaurar stock
         const items = await this.orderItemRepo.findByOrderId(id);
         for (const item of items) {
@@ -132,32 +149,15 @@ class OrderUseCase {
           await this.productRepo.update(product.id, { stock: product.stock + item.qty });
         }
 
-        // Cambiar status
         await this.orderRepo.updateStatus(id, 'CANCELED');
         return { id: order.id, status: 'CANCELED' };
-
-      } else if (order.status === 'CONFIRMED') {
-        const createdAt = new Date(order.created_at);
-        const diffMinutes = (now - createdAt) / (1000 * 60);
-
-        if (diffMinutes <= 10) {
-          // Restaurar stock
-          const items = await this.orderItemRepo.findByOrderId(id);
-          for (const item of items) {
-            const product = await this.productRepo.findById(item.product_id);
-            await this.productRepo.update(product.id, { stock: product.stock + item.qty });
-          }
-
-          await this.orderRepo.updateStatus(id, 'CANCELED');
-          return { id: order.id, status: 'CANCELED' };
-        } else {
-          throw new Error('Cannot cancel CONFIRMED order after 10 minutes');
-        }
       } else {
-        throw new Error('Order cannot be canceled');
+        throw new Error('Cannot cancel CONFIRMED order after 10 minutes');
       }
+    } else {
+      throw new Error('Order cannot be canceled');
+    }
   }
-
 }
 
 module.exports = OrderUseCase;
