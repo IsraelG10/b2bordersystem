@@ -1,4 +1,5 @@
 services:
+
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -13,3 +14,56 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  # --- Servicio de la API de Clientes (customers-api) ---
+  customers-api:
+    build:
+      context: ./customers-api
+      dockerfile: Dockerfile
+    container_name: customers-api
+    restart: unless-stopped
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - SERVICE_TOKEN=${SERVICE_TOKEN}
+    ports:
+      - "${PORT_CUSTUMER}:${PORT_CUSTUMER}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # --- Servicio de la API de Órdenes (orders-api) ---
+  # ESTE BLOQUE HA SIDO CORREGIDO MOVIÉNDOLO AL NIVEL DE 'services'
+  orders-api:
+    build:
+      context: ./orders-api
+      dockerfile: Dockerfile
+    container_name: orders-api
+    restart: unless-stopped
+    environment:
+      # Variables de MySQL (compartidas)
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - SERVICE_TOKEN=${SERVICE_TOKEN}
+      # Variables específicas de Orders
+      - PORT_ORDER=${PORT_ORDER}
+      # Importante: Usa el nombre del servicio de Docker (customers-api) para comunicarse
+      - CUSTOMERS_API_URL=${CUSTOMERS_API_URL}
+    ports:
+      - "${PORT_ORDER}:${PORT_ORDER}"
+    depends_on:
+      mysql:
+        condition: service_healthy # Espera que la DB esté lista antes de migrar
+      customers-api:
+        condition: service_started # No intenta comunicarse hasta que customers-api esté iniciado

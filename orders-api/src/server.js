@@ -3,7 +3,7 @@ require('dotenv').config();
 const app = require('./app');
 const db = require('./infrastructure/db');
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT_ORDER || 3002;
 
 // Health check usando Knex
 app.get('/health', async (req, res, next) => {
