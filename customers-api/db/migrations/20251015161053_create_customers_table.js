@@ -11,7 +11,6 @@ exports.up = async function (knex) {
       table.string("email").unique().notNullable();
       table.string("phone");
       table.timestamp("created_at").defaultTo(knex.fn.now());
-      table.timestamp("deleted_at").nullable();
     });
   }
 };
