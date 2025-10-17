@@ -12,5 +12,10 @@
   "scripts": {
     "prepare": "husky",
     "lint": "eslint --config eslint.config.js . --ext .js,.mjs,.cjs --fix"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
+    "uuid": "^13.0.0"
   }
 }

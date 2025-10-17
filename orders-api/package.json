@@ -1,8 +1,8 @@
 {
-  "name": "customers-api",
+  "name": "orders-api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.js",
+  "main": "app.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.12.2",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "install": "^0.13.0",
     "knex": "^3.1.0",
     "mysql2": "^3.15.2",
     "zod": "^4.1.12"
