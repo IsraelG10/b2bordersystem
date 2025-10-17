@@ -40,4 +40,4 @@ EXPOSE 3001
 # Utiliza /bin/sh -c para encadenar comandos de manera segura.
 # 1. Ejecuta 'yarn migrate' (asumiendo que está definido en package.json).
 # 2. Si es exitoso (&&), ejecuta 'node src/server.js' para iniciar la aplicación.
-CMD ["/bin/sh", "-c", "yarn migrate && node src/server.js"]
+CMD ["node", "src/server.js"]

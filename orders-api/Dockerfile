@@ -23,4 +23,4 @@ ENV PORT 4002
 
 EXPOSE 4002
 
-CMD ["/bin/sh", "-c", "yarn migrate && node src/server.js"]
+CMD ["node", "src/server.js"]
