@@ -17,9 +17,16 @@ functions:
           path: orchestrator/create-and-confirm-order
           method: post
 
+  health:
+    handler: src/handlers/health.handler
+    events:
+      - http:
+          path: orchestrator/health
+          method: get
+
 plugins:
   - serverless-offline
 
 custom:
   serverless-offline:
-    httpPort: 3000  # Cambia el puerto de la Lambda a 4000
+    httpPort: 3000

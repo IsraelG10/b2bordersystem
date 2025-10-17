@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^1.12.2",
     "dotenv": "^17.2.3",
+    "serverless-dotenv-plugin": "^6.0.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
