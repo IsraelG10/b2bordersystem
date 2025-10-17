@@ -69,7 +69,7 @@ DB_NAME=b2b_system
 DB_PORT=3306
 
 # TOKEN DE SEGURIDAD
-SERVICE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SERVICE_TOKEN=0754hYpkouFQVuK7NYOuAJg96CE
 
 # ORDER-API
 PORT_ORDER=4002
@@ -83,7 +83,7 @@ CUSTOMERS_API_URL=http://customers-api:3001
 ### 🟢 B. `.env` en `lambda-orchestrator` (modo local sin Docker)
 
 ```env
-SERVICE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SERVICE_TOKEN=0754hYpkouFQVuK7NYOuAJg96CE
 CUSTOMERS_API_URL=http://localhost:3001
 ORDERS_API_URL=http://localhost:4002
 ```
@@ -103,7 +103,7 @@ DB_USER=user
 DB_PASSWORD=password
 DB_NAME=b2b_system
 DB_PORT=3306
-SERVICE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SERVICE_TOKEN=0754hYpkouFQVuK7NYOuAJg96CE
 ```
 
 #### 🟠 Orders API
@@ -115,7 +115,7 @@ DB_USER=user
 DB_PASSWORD=password
 DB_NAME=b2b_system
 DB_PORT=3306
-SERVICE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SERVICE_TOKEN=0754hYpkouFQVuK7NYOuAJg96CE
 CUSTOMERS_API_URL=http://localhost:3001
 ```
 
