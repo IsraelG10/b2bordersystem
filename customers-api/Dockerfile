@@ -28,7 +28,6 @@ COPY --from=build /usr/src/app/src ./src
 COPY --from=build /usr/src/app/package.json ./package.json
 COPY --from=build /usr/src/app/knexfile.js ./knexfile.js
 COPY --from=build /usr/src/app/db ./db
-COPY --from=build /usr/src/app/openapi.yaml ./openapi.yaml
 
 # Variables de entorno por defecto (se sobrescribirán por docker-compose)
 # No necesitamos definir NODE_ENV aquí, Docker Compose lo puede manejar si es necesario.
